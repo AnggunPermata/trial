@@ -30,7 +30,7 @@ import (
 
 func CreateRequest(w http.ResponseWriter, r *http.Request) {
 
-	url := "{{BaseUrl}}/api/v2/qiscus/initiate_chat"
+	url := "https://multichannel.qiscus.com/api/v2/qiscus/initiate_chat"
 	method := "POST"
 
 	payload := strings.NewReader(`{
@@ -43,6 +43,9 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 	"sdk_user_extras" : {"teststs": "dadadadss"}
 }`)
 
+	AdminToken := "QEX6fCm0cwIkPF9F2T22Q1ikXPWVPiqSd0ZJtlrpCOA"
+	appId := "1093"
+
 	client := &http.Client{}
 	req, err := http.NewRequest(method, url, payload)
 
@@ -50,9 +53,9 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
-	req.Header.Add("Authorization", "{{AdminToken}}")
+	req.Header.Add("Authorization", AdminToken)
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Qiscus-App-Id", "{{appId}}")
+	req.Header.Add("Qiscus-App-Id", appId)
 
 	res, err := client.Do(req)
 	if err != nil {
