@@ -28,7 +28,7 @@ import (
 	"strings"
 )
 
-func main() {
+func CreateRequest() {
 
 	url := "{{BaseUrl}}/api/v2/qiscus/initiate_chat"
 	method := "POST"
