@@ -28,7 +28,7 @@ import (
 	"strings"
 )
 
-func CreateRequest() {
+func CreateRequest(w http.ResponseWriter, r *http.Request) {
 
 	url := "{{BaseUrl}}/api/v2/qiscus/initiate_chat"
 	method := "POST"
