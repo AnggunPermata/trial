@@ -1,53 +1,70 @@
 package controller
 
+// import (
+// 	"encoding/json"
+// 	"errors"
+// 	"net/http"
+// )
+
+// type RequestData struct {
+// 	App_Id          string `json:"app_id"`
+// 	Avatar_Url      string `json:"avatar_url"`
+// 	Candidate_Agent string `json:"candidate_agent"`
+// 	Email           string `json:"email"`
+// 	Is_New_Session  bool   `json:"is_new_session"`
+// 	Is_Resolved     bool   `json:"is_resolved"`
+// 	Latest_Service  string `json:"latest_service"`
+// 	Name            string `json:"name"`
+// 	Room_Id         string `json:"room_id"`
+// 	Source          string `json:"source"`
+// }
+
+// package main
+
 import (
-	"encoding/json"
-	"errors"
+	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
-type RequestData struct {
-	App_Id          string `json:"app_id"`
-	Avatar_Url      string `json:"avatar_url"`
-	Candidate_Agent string `json:"candidate_agent"`
-	Email           string `json:"email"`
-	Is_New_Session  bool   `json:"is_new_session"`
-	Is_Resolved     bool   `json:"is_resolved"`
-	Latest_Service  string `json:"latest_service"`
-	Name            string `json:"name"`
-	Room_Id         string `json:"room_id"`
-	Source          string `json:"source"`
-}
+func main() {
 
-func CreateRequest(w http.ResponseWriter, r *http.Request) {
-	headerContentTtype := r.Header.Get("Content-Type")
-	if headerContentTtype != "application/json" {
-		errorResponse(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
-		return
-	}
-	var e RequestData
-	var unmarshalErr *json.UnmarshalTypeError
+	url := "{{BaseUrl}}/api/v2/qiscus/initiate_chat"
+	method := "POST"
 
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	err := decoder.Decode(&e)
+	payload := strings.NewReader(`{
+	"app_id": "oni-bgo2lummmhvzqxbt5",
+	"user_id": "terlena_saya",
+	"name": "terlena",
+	"extras": "{\"a\":\"w\"}",
+	"user_properties" : {"aji": "tra", "ma": "ta"},
+	"reset_extras": true,
+	"sdk_user_extras" : {"teststs": "dadadadss"}
+}`)
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, payload)
+
 	if err != nil {
-		if errors.As(err, &unmarshalErr) {
-			errorResponse(w, "Bad Request. Wrong Type provided for field "+unmarshalErr.Field, http.StatusBadRequest)
-		} else {
-			errorResponse(w, "Bad Request "+err.Error(), http.StatusBadRequest)
-		}
+		fmt.Println(err)
 		return
 	}
-	errorResponse(w, "Success", http.StatusOK)
-	return
-}
+	req.Header.Add("Authorization", "{{AdminToken}}")
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Qiscus-App-Id", "{{appId}}")
 
-func errorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(httpStatusCode)
-	resp := make(map[string]string)
-	resp["message"] = message
-	jsonResp, _ := json.Marshal(resp)
-	w.Write(jsonResp)
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
 }
