@@ -9,7 +9,7 @@ import (
 
 var PORT string
 
-func goDotEnvVariable(key string) string {
+func GoDotEnvVariable(key string) string {
 
 	// load .env file
 	err := godotenv.Load(".env")
@@ -22,5 +22,5 @@ func goDotEnvVariable(key string) string {
 }
 
 func InitPort() {
-	PORT = goDotEnvVariable("PORT")
+	PORT = GoDotEnvVariable("PORT")
 }

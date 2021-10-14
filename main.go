@@ -9,10 +9,10 @@ import (
 )
 
 func main() {
-	log.Println("Starting the HTTP server on port 8090")
+	log.Println("Starting the HTTP server on port 8080")
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/caa", controller.CreateRequest)
+	mux.HandleFunc("/caa", controller.InitiateChat)
 
 	config.InitPort()
 	err := http.ListenAndServe(config.PORT, mux)
