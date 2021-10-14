@@ -52,14 +52,12 @@ func AssignAgent(cus models.CustomerData, agentId string) (*models.QiscusRespons
 	}
 
 	newResp := new(models.QiscusResponse)
-	if err := json.Unmarshal(resp, &newResp); err != nil {
+	if err2 := json.Unmarshal(resp, &newResp.Data); err2 != nil {
 		return nil, err
+	} else {
+		newResp.Message = "Assign Agent Success"
 	}
-
-	newResp.Message = "Assign Agent Success"
-
 	return newResp, nil
-
 }
 
 func InitiateChat(w http.ResponseWriter, r *http.Request, payload *strings.Reader) ([]byte, error) {
