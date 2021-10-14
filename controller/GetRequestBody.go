@@ -1,6 +1,5 @@
 package controller
 
-/*
 import (
 	"encoding/json"
 	"fmt"
@@ -36,18 +35,18 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 	// Do something with the Person struct...
 	fmt.Fprintf(w, "%+v", req)
 }
-*/
 
+/*
 import (
 	"bytes"
 	"fmt"
-	"github.com/anggunpermata/custom-webhook/config"
+	"github.com/labstack/echo"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 )
 
-func InitiateChat(w http.ResponseWriter, r *http.Request) {
+func InitiateChat(w http.ResponseWriter, r *http.Request) string {
 
 	url := "https://multichannel.qiscus.com/api/v1/qiscus/initiate_chat"
 	method := "POST"
@@ -68,7 +67,7 @@ func InitiateChat(w http.ResponseWriter, r *http.Request) {
 	err := writer.Close()
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err.Error()
 	}
 
 	client := &http.Client{}
@@ -76,28 +75,39 @@ func InitiateChat(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err.Error()
 	}
 
-	AdminToken := config.GoDotEnvVariable("AdminToken")
-	AppCode := config.GoDotEnvVariable("AppId")
+	// AdminToken := config.GoDotEnvVariable("AdminToken")
+	// AppCode := config.GoDotEnvVariable("AppId")
 
-	req.Header.Add("Authorization", AdminToken)
+	req.Header.Add("Authorization", "{{AdminToken}}")
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Qiscus-App-Id", AppCode)
+	req.Header.Add("Qiscus-App-Id", "{{AppCode}}")
 
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 	res, err := client.Do(req)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err.Error()
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err.Error()
 	}
-	fmt.Println(string(body))
+	result := string(body)
+	return result
 }
+
+func InitiatedChat(c echo.Context) error {
+	var w http.ResponseWriter
+	var r *http.Request
+	result := InitiateChat(w, r)
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"data": result,
+	})
+}
+*/
