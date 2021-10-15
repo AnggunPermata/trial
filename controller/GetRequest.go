@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/anggunpermata/custom-webhook/config"
@@ -40,8 +41,11 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 
 func AssignAgent(cus models.CustomerData, agentId string) (*models.QiscusResponse, error) {
 	data := url.Values{}
-	data.Set("room_id", cus.RoomId)
+	data.Set("room_id", cus.RoomID)
 	data.Set("agent_id", agentId)
+	data.Set("app_id", cus.AppID)
+	data.Set("user_id", strconv.Itoa(cus.LatestService.UserID))
+	// data.Set("name", cus.Name)
 
 	var w http.ResponseWriter
 	var r *http.Request
@@ -62,32 +66,34 @@ func AssignAgent(cus models.CustomerData, agentId string) (*models.QiscusRespons
 
 func InitiateChat(w http.ResponseWriter, r *http.Request, payload *strings.Reader) ([]byte, error) {
 
-	uri := "https://multichannel.qiscus.com/api/v1/qiscus/initiate_chat"
+	uri := "https://multichannel.qiscus.com/api/v2/qiscus/initiate_chat"
 	method := "POST"
 
+	client := &http.Client{}
 	req, err := http.NewRequest(method, uri, payload)
 	if err != nil {
 		fmt.Println(err)
-		return nil, fmt.Errorf("Error from structuring requests")
+		return nil, fmt.Errorf("error from structuring requests")
 	}
 
-	// AdminToken := config.GoDotEnvVariable("AdminToken")
-	AppCode := config.GoDotEnvVariable("AppId")
-	SecretKey := config.GoDotEnvVariable("SecretKey")
+	AdminToken := config.GoDotEnvVariable("AdminToken")
+	// AppCode := config.GoDotEnvVariable("AppId")
+	// SecretKey := config.GoDotEnvVariable("SecretKey")
 
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("Qiscus-App-Id", AppCode)
-	req.Header.Add("Qiscus-Secret-Key", SecretKey)
+	req.Header.Add("Authorization", AdminToken)
+	req.Header.Add("Content-Type", "application/json")
+	// req.Header.Add("Qiscus-App-Id", AppCode)
+	// req.Header.Add("Qiscus-Secret-Key", SecretKey)
 
-	res, err := http.DefaultClient.Do(req)
+	res, err := client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("Error from getting response")
+		return nil, fmt.Errorf("error from getting response")
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("Error from read response body")
+		return nil, fmt.Errorf("error from read response body")
 	}
 	// result := string(body)
 	return body, nil
