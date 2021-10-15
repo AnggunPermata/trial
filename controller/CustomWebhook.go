@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/anggunpermata/custom-webhook/config"
@@ -10,7 +11,7 @@ import (
 )
 
 func AssignAgentWebhook(c echo.Context) error {
-	var customerReq models.InitiateReq
+	var customerReq models.CustomerData
 	if err := c.Bind(&customerReq); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Not valid",
@@ -28,8 +29,13 @@ func AssignAgentWebhook(c echo.Context) error {
 	})
 }
 
-func AgentAllocationWebhook(ctx context.Context, req models.InitiateReq) (interface{}, error) {
+func AgentAllocationWebhook(ctx context.Context, req models.CustomerData) (interface{}, error) {
 	//agent used: anggun@qiscus.cx
+
+	//print disini models.CustomerData
+
+	fmt.Println(req)
+
 	agentId := config.GoDotEnvVariable("AgentId")
 	r, err := AssignAgent(req, agentId)
 	if err != nil {

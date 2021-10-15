@@ -40,7 +40,7 @@ type InitiateResp struct {
 	} `json:"data"`
 }
 
-type CustomerData struct {
+type CustomerDataFull struct {
 	AppID         string `json:"app_id"`
 	Source        string `json:"source"`
 	Name          string `json:"name"`
@@ -86,6 +86,21 @@ type CustomerData struct {
 		TypeAsString        string   `json:"type_as_string"`
 		AssignedRules       []string `json:"assigned_rules"`
 	} `json:"candidate_agent"`
+}
+
+type CustomerData struct {
+	AppID          string `json:"app_id"`
+	CandidateAgent struct {
+		ID          int    `json:"id"`
+		Name        string `json:"name"`
+		Email       string `json:"email"`
+		IsAvailable bool   `json:"is_available"`
+	} `json:"candidate_agent"`
+	Email        string `json:"email"`
+	Name         string `json:"name"`
+	RoomId       string `json:"room_id"`
+	IsNewSession bool   `json:"is_new_session"`
+	IsResolved   bool   `json:"is_resolved"`
 }
 
 /*
