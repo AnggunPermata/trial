@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 	"strings"
 
 	"github.com/anggunpermata/custom-webhook/config"
@@ -39,13 +38,13 @@ func CreateRequest(w http.ResponseWriter, r *http.Request) {
 }
 */
 
-func AssignAgent(cus models.CustomerData, agentId string) (*models.QiscusResponse, error) {
+func AssignAgent(cus models.InitiateReq, agentId string) (*models.QiscusResponse, error) {
 	data := url.Values{}
-	data.Set("room_id", cus.RoomID)
-	data.Set("agent_id", agentId)
+	// data.Set("room_id", cus.RoomID)
+	// data.Set("agent_id", agentId)
 	data.Set("app_id", cus.AppID)
-	data.Set("user_id", strconv.Itoa(cus.LatestService.UserID))
-	// data.Set("name", cus.Name)
+	data.Set("user_id", cus.UserID)
+	data.Set("name", cus.Name)
 
 	var w http.ResponseWriter
 	var r *http.Request
@@ -77,12 +76,12 @@ func InitiateChat(w http.ResponseWriter, r *http.Request, payload *strings.Reade
 	}
 
 	AdminToken := config.GoDotEnvVariable("AdminToken")
-	// AppCode := config.GoDotEnvVariable("AppId")
+	AppCode := config.GoDotEnvVariable("AppId")
 	// SecretKey := config.GoDotEnvVariable("SecretKey")
 
 	req.Header.Add("Authorization", AdminToken)
 	req.Header.Add("Content-Type", "application/json")
-	// req.Header.Add("Qiscus-App-Id", AppCode)
+	req.Header.Add("Qiscus-App-Id", AppCode)
 	// req.Header.Add("Qiscus-Secret-Key", SecretKey)
 
 	res, err := client.Do(req)

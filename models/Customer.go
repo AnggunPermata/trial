@@ -13,6 +13,33 @@ type Customer struct {
 	Status  string `json:"status"`
 }
 
+type InitiateReq struct {
+	AppID  string `json:"app_id"`
+	UserID string `json:"user_id"`
+	Name   string `json:"name"`
+}
+
+type InitiateResp struct {
+	Data struct {
+		IdentityToken string `json:"identity_token"`
+		RoomID        string `json:"room_id"`
+		SdkUser       struct {
+			ID          int    `json:"id"`
+			Token       string `json:"token"`
+			Email       string `json:"email"`
+			Password    string `json:"password"`
+			DisplayName string `json:"display_name"`
+			AvatarURL   string `json:"avatar_url"`
+			Extras      struct {
+				AdditionalExtras map[string]string `json:"additional_extras"`
+				IsCustomer       bool              `json:"is_customer"`
+				Type             string            `json:"customer"`
+			} `json:"extras"`
+		} `json:"sdk_user"`
+		IsSessional bool `json:"is_sessional"`
+	} `json:"data"`
+}
+
 type CustomerData struct {
 	AppID         string `json:"app_id"`
 	Source        string `json:"source"`

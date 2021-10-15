@@ -10,7 +10,7 @@ import (
 )
 
 func AssignAgentWebhook(c echo.Context) error {
-	var customerReq models.CustomerData
+	var customerReq models.InitiateReq
 	if err := c.Bind(&customerReq); err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Not valid",
@@ -28,7 +28,7 @@ func AssignAgentWebhook(c echo.Context) error {
 	})
 }
 
-func AgentAllocationWebhook(ctx context.Context, req models.CustomerData) (interface{}, error) {
+func AgentAllocationWebhook(ctx context.Context, req models.InitiateReq) (interface{}, error) {
 	//agent used: anggun@qiscus.cx
 	agentId := config.GoDotEnvVariable("AgentId")
 	r, err := AssignAgent(req, agentId)
